@@ -21,50 +21,70 @@ def speak(text):
     engine.say(text)
     engine.runAndWait()
 
-# function
+# Function to wish user
 
 
 def wishMe():
     hour = int(datetime.datetime.now().hour)
-    if hour >= 0 and hour < 12:
+    if 0 <= hour < 12:
         speak("Good Morning" + MASTER)
-    elif hour >= 12 and hour < 18:
+    elif 12 <= hour < 18:
         speak("Good Afternoon" + MASTER)
     else:
         speak("Good Evening" + MASTER)
-        speak("")
+    speak("How can I assist you today?")
 
-# microphone
+# Function to take user command
 
 
 def takeCommand():
     r = sr.Recognizer()
+
     with sr.Microphone() as source:
         print("Listening...")
         audio = r.listen(source)
 
     try:
-        print("Recognation...")
+        print("Recognizing...")
         query = r.recognize_google(audio, language="en-us")
-        print(f"user said: {query}\n")
+        print(f"User said: {query}\n")
 
     except Exception as e:
-        print("Say that again please...")
+        print("Say that again, please...")
         query = None
 
     return query
 
-# main program
 
+# Main program
+if __name__ == "__main__":
+    print("Hello, my name is LogicLinx.")
+    wishMe()
 
-speak("Hello my name is LogicLinx, how can I help you?")
-wishMe()
-query = takeCommand()
+    while True:
+        query = takeCommand().lower()
 
-# logic for task as per query
-if 'wikipedia' in query.lower():
-    speak('Searching Wikipedia...')
-    query = query.replace("wikipedia", "")
-    results = wikipedia.summary(query, sentences=2)
-    print(results)
-    speak(results)
+        if 'wikipedia' in query:
+            speak('Searching Wikipedia...')
+            query = query.replace("wikipedia", "")
+            results = wikipedia.summary(query, sentences=2)
+            print(results)
+            speak(results)
+
+        elif 'open youtube' in query:
+            webbrowser.open("https://www.youtube.com")
+
+        elif 'open google' in query:
+            webbrowser.open("https://www.google.com")
+
+        elif 'play music' in query:
+            # Add your music play logic here
+            pass
+
+        elif 'what is the time' in query:
+            strTime = datetime.datetime.now().strftime("%H:%M:%S")
+            speak(f"The time is {strTime}")
+
+        elif 'quit' in query or 'exit' in query:
+            speak("Goodbye!")
+            break
